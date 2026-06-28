@@ -45,6 +45,7 @@ async def generate_manim(request: ProblemRequest):
         Please analyze this and provide a step-by-step storyboard for a Manim animation.
         Output your response as a numbered list of steps (e.g., "1. 양변을 미분합니다.", "2. ...").
         Keep the steps concise, focusing on the mathematical logic and visual changes.
+        IMPORTANT: For all mathematical formulas, use standard markdown math delimiters: $ for inline math (e.g., $x^2$) and $$ for block math. Do NOT use \( or \).
         Respond in Korean.
         """
         

@@ -1,6 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import ReactMarkdown from 'react-markdown';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
+import 'katex/dist/katex.min.css';
 
 // Manim Default Colors
 const MANIM_CYAN = "#58C4DD";
@@ -13,6 +17,7 @@ export default function Home() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [storyboard, setStoryboard] = useState<string[]>([]);
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,6 +26,7 @@ export default function Home() {
     setIsGenerating(true);
     setStoryboard([]);
     setVideoUrl(null);
+    setIsModalOpen(false);
 
     try {
       const response = await fetch("http://localhost:8000/api/generate", {
@@ -52,6 +58,40 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-black text-neutral-200 font-sans selection:bg-[#58C4DD]/30">
+      
+      {/* Storyboard Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 lg:p-12">
+          <div className="bg-neutral-950 border border-neutral-800 w-full max-w-5xl max-h-full flex flex-col shadow-2xl">
+            {/* Modal Header */}
+            <div className="flex justify-between items-center p-6 border-b border-neutral-900 bg-black">
+              <h2 className="text-xl font-bold text-white flex items-center gap-3">
+                 <div className="w-6 h-6 flex items-center justify-center font-bold text-sm text-black" style={{ backgroundColor: MANIM_CYAN }}>M</div> 
+                 AI 풀이 스토리보드 상세
+              </h2>
+              <button onClick={() => setIsModalOpen(false)} className="text-neutral-500 hover:text-white transition-colors p-2">
+                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+              </button>
+            </div>
+            {/* Modal Body */}
+            <div className="p-6 lg:p-10 overflow-y-auto space-y-4 bg-neutral-950">
+              {storyboard.map((step, idx) => (
+                 <div key={idx} className="flex gap-6 items-start p-6 bg-black border border-neutral-800 w-full">
+                   <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center text-base font-bold text-black" style={{ backgroundColor: MANIM_CYAN }}>
+                     {idx + 1}
+                   </div>
+                   <div className="text-base text-neutral-200 leading-relaxed w-full min-w-0">
+                     <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>
+                       {step}
+                     </ReactMarkdown>
+                   </div>
+                 </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <header className="border-b border-neutral-900 bg-black sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
@@ -97,7 +137,7 @@ export default function Home() {
       <main className="max-w-7xl mx-auto px-6 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           
-          {/* Left Pane: Input & Storyboard */}
+          {/* Left Pane: Input & Storyboard Preview */}
           <div className="lg:col-span-5 flex flex-col gap-6">
             <div className="bg-black border border-neutral-800 p-6">
               <h2 className="text-lg font-semibold mb-4 text-white">수식 및 문제 입력</h2>
@@ -123,36 +163,49 @@ export default function Home() {
               </form>
             </div>
 
-            {/* Storyboard Area */}
+            {/* Storyboard Preview Area */}
             <div className={`transition-all duration-500 ${storyboard.length > 0 ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
-              <div className="bg-black border border-neutral-800 p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-lg font-semibold text-white">AI 풀이 스토리보드</h2>
-                  {isGenerating && <span className="flex h-3 w-3 rounded-full animate-ping" style={{ backgroundColor: MANIM_YELLOW }}></span>}
+              <div 
+                className="bg-neutral-950 border border-neutral-800 p-6 cursor-pointer hover:border-neutral-600 transition-colors group relative overflow-hidden"
+                onClick={() => setIsModalOpen(true)}
+              >
+                <div className="flex items-center justify-between mb-2">
+                  <h2 className="text-lg font-semibold text-white transition-colors" style={{ color: MANIM_CYAN }}>AI 풀이 분석 완료!</h2>
+                  <svg className="w-5 h-5 text-neutral-500 group-hover:text-white transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" /></svg>
                 </div>
-                <div className="space-y-4">
-                  {storyboard.map((step, idx) => (
-                    <div key={idx} className="flex gap-4 items-start p-4 bg-neutral-950 border border-neutral-900">
-                      <div 
-                        className="flex-shrink-0 w-6 h-6 flex items-center justify-center text-sm font-bold text-black"
-                        style={{ backgroundColor: MANIM_CYAN }}
-                      >
+                <p className="text-sm text-neutral-400 mb-6">총 {storyboard.length}개의 애니메이션 씬이 기획되었습니다. 클릭하여 전체 수식과 상세 내용을 확인하세요.</p>
+                
+                {/* Faded Preview of steps */}
+                <div className="space-y-3 opacity-40 pointer-events-none" style={{ maskImage: 'linear-gradient(to bottom, black 20%, transparent 100%)', WebkitMaskImage: 'linear-gradient(to bottom, black 20%, transparent 100%)' }}>
+                  {storyboard.slice(0, 3).map((step, idx) => (
+                    <div key={idx} className="flex gap-4 items-start p-3 bg-black border border-neutral-900">
+                      <div className="flex-shrink-0 w-5 h-5 flex items-center justify-center text-xs font-bold text-black" style={{ backgroundColor: MANIM_CYAN }}>
                         {idx + 1}
                       </div>
-                      <p className="text-sm text-neutral-300 leading-relaxed">{step}</p>
+                      <div className="text-xs text-neutral-300 line-clamp-2">
+                        <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>{step}</ReactMarkdown>
+                      </div>
                     </div>
                   ))}
-                  {isGenerating && storyboard.length > 0 && !videoUrl && (
-                    <div className="p-4 flex items-center gap-3 text-neutral-400 text-sm">
-                      <div 
-                        className="w-4 h-4 border-2 border-t-transparent rounded-full animate-spin"
-                        style={{ borderColor: MANIM_YELLOW, borderTopColor: 'transparent' }}
-                      ></div>
-                      Manim 렌더링 중... (최대 30초 소요)
-                    </div>
-                  )}
+                </div>
+
+                {/* Overlay Button */}
+                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/40 backdrop-blur-[2px]">
+                   <span className="px-4 py-2 bg-black border text-sm font-semibold text-white" style={{ borderColor: MANIM_CYAN }}>
+                     상세 보기 확대
+                   </span>
                 </div>
               </div>
+              
+              {isGenerating && storyboard.length > 0 && !videoUrl && (
+                <div className="mt-4 p-4 flex items-center gap-3 text-neutral-400 text-sm border border-neutral-800 bg-black">
+                  <div 
+                    className="w-4 h-4 border-2 border-t-transparent rounded-full animate-spin"
+                    style={{ borderColor: MANIM_YELLOW, borderTopColor: 'transparent' }}
+                  ></div>
+                  Manim 렌더링 중... (최대 30초 소요)
+                </div>
+              )}
             </div>
           </div>
 
