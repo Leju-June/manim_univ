@@ -1,0 +1,17 @@
+<svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="44" height="44" fill="#58C4DD"/>
+<line x1="2" y1="7" x2="16" y2="7" stroke="black" stroke-width="2" stroke-linecap="round"/>
+<line x1="28" y1="7" x2="42" y2="7" stroke="black" stroke-width="2" stroke-linecap="round"/>
+<line x1="3.5" y1="7" x2="3.5" y2="39" stroke="black"/>
+<line x1="39.5" y1="7" x2="39.5" y2="39" stroke="black"/>
+<line x1="37.5" y1="7" x2="37.5" y2="39" stroke="black"/>
+<line x1="8.5" y1="38.5" x2="1.5" y2="38.5" stroke="black" stroke-linecap="round"/>
+<line x1="42.5" y1="38.5" x2="35.5" y2="38.5" stroke="black" stroke-linecap="round"/>
+<line x1="4.31698" y1="7.51534" x2="17.5153" y2="37.683" stroke="black" stroke-width="2" stroke-linecap="round"/>
+<rect x="20.5" y="24.5" width="8" height="13" rx="3.5" stroke="black"/>
+<rect x="19" y="24" width="11" height="7" fill="#58C4DD"/>
+<rect x="33.5381" y="41.5" width="4" height="6" rx="1.5" transform="rotate(180 33.5381 41.5)" stroke="black"/>
+<rect x="35" y="41.9995" width="7" height="4" transform="rotate(180 35 41.9995)" fill="#58C4DD"/>
+<line x1="15.5495" y1="33.7831" x2="28.5495" y2="6.78309" stroke="black"/>
+<path d="M24.5 28L32.5 30.5L24.5 33L16.5 30.5L24.5 28Z" fill="black"/>
+</svg>
