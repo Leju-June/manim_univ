@@ -1,0 +1,2 @@
+- 이미지 -> 수학 수식 (Math OCR) 변환
+ mathpix API 사용
